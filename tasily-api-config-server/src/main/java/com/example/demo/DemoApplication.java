@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-
+/*
+* 本服务为配置中心config server，从git中读取配置，提供给其它config client调用者
+* */
 @EnableEurekaClient
 @EnableConfigServer
 @SpringBootApplication
