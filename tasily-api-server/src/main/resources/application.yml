@@ -1,0 +1,15 @@
+server:
+  port: 8761
+eureka:
+  instance:
+    hostname: 192.168.11.110
+    prefer-ip-address: true
+  client:
+    # 设置是否从注册中心获取注册信息（缺省true）
+    # 因为这是一个单点的EurekaServer，不需要同步其它EurekaServer节点的数据，故设为false
+    register-with-eureka: false
+    fetch-registry: false # 设置是否将自己作为客户端注册到注册中心（缺省true）
+    service-url-defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    enable-self-preservation: false  # 关闭自我保护模式（缺省为打开）
+    eviction-interval-timer-in-ms: 1000  # 续期时间，即扫描失效服务的间隔时间（缺省为60*1000ms）
