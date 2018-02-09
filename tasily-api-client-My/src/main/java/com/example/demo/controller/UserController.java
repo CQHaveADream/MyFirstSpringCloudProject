@@ -29,13 +29,13 @@ public class UserController {
       return service.UserRegister(code);
     }
 
-    @HystrixCommand(fallbackMethod = "Error")
+    @HystrixCommand(fallbackMethod = "Error") //如果出现异常，就去调用Error方法，防止出现雪崩效应
     @RequestMapping(value = "/toLogin.form",method = RequestMethod.POST)
     public Object toLogin(@RequestBody JSONObject Msg)throws InterruptedException{
         String code = Msg.getString("code");
         String password = Msg.getString("password");
         boolean flag = Msg.getBoolean("flag");
-        if (flag){
+        if (flag){ //通过路由，去调用service-you服务中的findUserByName接口()
             String Url = localUrlPrefix + "/local/findUserByName.form";
             return restTemplate.postForObject(Url,CompanyUser.class,JSONObject.class);
         }
