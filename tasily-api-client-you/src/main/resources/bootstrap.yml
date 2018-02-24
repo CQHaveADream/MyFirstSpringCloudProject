@@ -3,7 +3,7 @@ eureka:
     service-url-defaultZone: http://192.168.11.110:8761/eureka/
 my:
   config:
-    url: 192.168.11.110
+    url: 192.168.0.105
     port: 8888
 spring:
   application:
@@ -12,7 +12,7 @@ spring:
     config:
       label: master
       profile: dev
-      discovery:
+      discovery:    #从configServer读取配置
         enabled: true
         service-id: config-server
       enabled: true

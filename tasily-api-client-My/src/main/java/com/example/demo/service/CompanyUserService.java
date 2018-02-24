@@ -6,14 +6,15 @@ import com.example.demo.domain.CompanyUser;
 import com.example.demo.util.JsonUtil;
 import com.example.demo.util.RedisUtil;
 import com.example.demo.util.RegularKey;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CompanyUserService {
@@ -52,10 +53,12 @@ public class CompanyUserService {
     }
 
     //模拟登录
+    //@CachePut 应用到写数据的方法上，如新增/修改方法，调用方法时会自动把相应的数据放入缓存
+    //@CachePut(value = "addCache", keyGenerator = "wiselyKeyGenerator")
     public JSONObject Login(String code,String password) throws InterruptedException{
         //从Redis中读取
         if (redisUtil.hasKey(code)){
-            String RdsPass = redisUtil.getStringValue(code);
+            String RdsPass = (String) redisUtil.getHashValue(code,"RdsPass");
                 if (!password.equalsIgnoreCase(RdsPass)||password.equals("")||password==null){
                     return jsonUtil.failure(404,"密码不正确","请重新输入密码");
                 }
@@ -75,14 +78,12 @@ public class CompanyUserService {
         }
 
         //将信息存入Redis
-        redisUtil.setValue(code,RegPas);
+        Map<String,Object> map = new HashMap<>();
+        map.put("userName",user.getName());
+        map.put("code",code);
+        map.put("RdsPass",RegPas);
+        redisUtil.PutValueForHash(code,map);
         return jsonUtil.success(null);
-    }
-
-    //断路器
-    public JSONObject FindError(JSONObject error){
-         error.put("error","请联系管理员，我们会尽快处理！");
-         return error;
     }
 
     //注销用户
@@ -95,6 +96,20 @@ public class CompanyUserService {
 
         dao.deleteByCode(code);
         return jsonUtil.success(null);
+    }
+
+    //根据用户名查找用户姓名
+    public String findNameByCode(String code){
+        CompanyUser user = dao.findByCode(code);
+        String name = user.getName();
+        return name;
+    }
+    //查询所有用户
+    public Page<CompanyUser> findAllUser(JSONObject code){
+
+        int start = code.getIntValue("start");
+        int end = code.getIntValue("end");
+        return dao.findAll(new PageRequest(start,end));
     }
 
 }

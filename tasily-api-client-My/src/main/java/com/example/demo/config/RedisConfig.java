@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Method;
 
 /*
 * Redis 的配置类
@@ -27,6 +30,27 @@ public class RedisConfig {
         initDomainRedisTemplate(template,factory);
         return template;
     }
+
+    /*
+*  自定义key生成策略
+ * 类名+方法名+参数(适用于分布式缓存)，
+ * 默认key生成策略分布式下有可能重复被覆盖
+* */
+    /*@Bean
+    public static KeyGenerator wiselyKeyGenerator(){
+        return new KeyGenerator() {
+            @Override
+            public Object generate(Object target, Method method, Object... params) {
+                StringBuffer buffer = new StringBuffer();
+                buffer.append(target.getClass().getName());
+                buffer.append(method.getName());
+                for(Object obj:params){
+                    buffer.append(obj);
+                }
+                return buffer.toString();
+            }
+        };
+    }*/
 
     //序列化方式
     public void initDomainRedisTemplate(RedisTemplate template,RedisConnectionFactory factory){

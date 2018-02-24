@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -91,5 +93,23 @@ public class RedisUtil {
 
     /*----------------------------------------------String---------------------------------------------------------*/
 
+
+    /*----------------------------------------------Hash---------------------------------------------------------*/
+
+    public void PutValueForHash(String key, Map<String,Object> map){
+        hashOperations.putAll(key,map);
+    }
+
+    public boolean hasHashKey(String key,Object hashKey){
+       return hashOperations.hasKey(key,hashKey);
+    }
+
+    public List<Object> getAllValueForHash(String key){
+        return hashOperations.values(key);
+    }
+
+    public Object getHashValue(String key,Object hashKey){
+       return hashOperations.get(key,hashKey);
+    }
 
 }
