@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+    <meta charset="utf-8"/>
+    <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/image.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="./js/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="./js/themes/icon.css">
+    <script type="text/javascript" src="./js/locale/easyui-lang-zh_CN.js"></script>
+    <link rel="stylesheet" type="text/css" href="./js/demo/demo.css">
+    <script type="text/javascript">
+        var loginAndRegister;
+        $(function(){
+            loginAndRegister=$('#loginAndRegister').dialog({
+                closable : false,
+                modal : true,
+                buttons: [
+                    {
+                        text:'登录',handler:function(){
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            url: 'http://192.168.11.110:8762/user/toLogin.form',
+                            contentType : 'application/json',
+                            data: JSON.stringify({name:$('#code').val(),password:$('#pas').val(),flag:true}),
+                            success: function(data){
+                                console.log(data);
+                                if(data.code==204){
+                                    window.location.href = "index.html";
+                                }
+                            }
+                        });
+                        /*var name=$('#code').val();
+                        var pas=$('#pas').val();
+                        var data={name:name,password:pas};
+                        var url= 'http://192.168.0.103:8762/user/toLogin.form&callback=?';
+                        var dataType = 'jsonp';
+                        $.post(url,data,dataType,function(result){
+                            console.log(result);
+                        });*/
+                    }},
+                    {
+                        text:'注册',
+                        handler:function(){
+                            console.info("注册事件");
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="loginAndRegister" title="用户登录" style="width:400px;height:200px">
+    <table align="center">
+        <tr>
+            <th align="right">用户名</th>
+            <td><input  id="code" name="name"></td>
+        </tr>
+        <tr>
+            <th align="right">密码</th>
+            <td><input id="pas" name="pasword" type="password"/></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

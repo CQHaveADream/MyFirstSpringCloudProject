@@ -1,0 +1,21 @@
+eureka:
+  client:
+    service-url-defaultZone: http://192.168.11.110:8761/eureka/
+spring:
+  application:
+    name: service-my
+  profiles:
+    active: dev
+  cloud:
+    config:
+      label: master
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: config-server
+      enabled: true
+
+
+
+
+
