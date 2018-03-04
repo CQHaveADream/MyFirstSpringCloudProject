@@ -10,4 +10,7 @@ public interface CompanyUserDao extends JpaRepository<CompanyUser,Serializable> 
 
     @Query("select c from CompanyUser c where c.name = ?1")
     CompanyUser findByName(String code);
+
+    @Query("select u from CompanyUser u where u.code = ?1")
+    CompanyUser findByCode(String code);
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("local")
+@RequestMapping("/local")
 public class CompanyUserController {
 
     @Autowired
@@ -18,11 +18,20 @@ public class CompanyUserController {
 
     @Value("${server.port}")
     private String port;
-    @RequestMapping(value = "/findUserByName.form",method = RequestMethod.POST)
-    public JSONObject  findUserByName(@RequestBody JSONObject object){
-        String name = object.getString("name");
-        object.put("Msg",service.findByName(name));
+
+    @RequestMapping(value = "/UserLogin.form",method = RequestMethod.POST)
+    public JSONObject  findUserByName(@RequestBody JSONObject object)throws InterruptedException{
+        String code = object.getString("code");
+        String password = object.getString("password");
+        object = service.Login(code,password);
         object.put("port",port);
+        object.put("code",204);
         return object;
     }
+
+    @RequestMapping("/hi")
+    public String test1(){
+        return "hi";
+    }
+
 }

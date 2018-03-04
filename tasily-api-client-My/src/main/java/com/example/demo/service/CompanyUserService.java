@@ -52,40 +52,6 @@ public class CompanyUserService {
         return jsonUtil.success(null);
     }
 
-    //模拟登录
-    //@CachePut 应用到写数据的方法上，如新增/修改方法，调用方法时会自动把相应的数据放入缓存
-    //@CachePut(value = "addCache", keyGenerator = "wiselyKeyGenerator")
-    public JSONObject Login(String code,String password) throws InterruptedException{
-        //从Redis中读取
-        if (redisUtil.hasKey(code)){
-            String RdsPass = (String) redisUtil.getHashValue(code,"RdsPass");
-                if (!password.equalsIgnoreCase(RdsPass)||password.equals("")||password==null){
-                    return jsonUtil.failure(404,"密码不正确","请重新输入密码");
-                }
-            return jsonUtil.success(null);
-        }
-        Thread.sleep(1000);
-
-        CompanyUser user = dao.findByCode(code);
-        if (user==null||code==null||code.equals("")){
-            return jsonUtil.failure(404,"用户信息不存在","请核实用户名信息");
-        }
-        //从数据库中获取密码
-        String RegPas = regularKey.getBase64Decode(user.getPassword());
-
-        if (!password.equalsIgnoreCase(RegPas)||password.equals("")||password==null){
-            return jsonUtil.failure(404,"密码不正确","请重新输入密码");
-        }
-
-        //将信息存入Redis
-        Map<String,Object> map = new HashMap<>();
-        map.put("userName",user.getName());
-        map.put("code",code);
-        map.put("RdsPass",RegPas);
-        redisUtil.PutValueForHash(code,map);
-        return jsonUtil.success(null);
-    }
-
     //注销用户
     @Transactional
     public JSONObject Cancellation(String code) throws InterruptedException{
