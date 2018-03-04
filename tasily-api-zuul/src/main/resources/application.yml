@@ -4,17 +4,16 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 server:
   port: 8765
-spring:
-  application:
-    name: service-zuul
-  profiles:
-    active: dev
-  cloud:
-    config:
-      label: master
-      profile: dev
-      discovery:
-        enabled: true
-        service-id: config-server
-      enabled: true
+#ribbon:
+    #eureka:
+       #enabled: false  #配置zuul路由时 将此属性设置为false
+
+#service-my:
+  #ribbon:
+    #listOfServers: http://local:8762
+
+#service-you:
+  #ribbon:
+    #listOfServers: http://local:8765
+
 
