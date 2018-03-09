@@ -9,6 +9,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,9 +30,19 @@ public class UserController {
     private String port;
 
     @Autowired
+    @LoadBalanced
     private RestTemplate restTemplate;
 
-    private String localUrlPrefix = "http://service-you";
+    /*
+    * 此处没开启负载均衡，但调用的是Zuul网关路由。
+    * 然而Zuul和Ribbon默认结合实现了负载均衡。
+    * 想要通过zuul实现路由，就必须发送如下URL，但该格式的URL不能由
+    * restTemplate发送，so...只能通过commRestTemplate方式
+    * */
+    @Autowired
+    private RestTemplate commRestTemplate;
+
+    private String localUrlPrefix = "http://192.168.11.110:8765/service-b";
 
     @Autowired
     private JsonUtil jsonUtil;
@@ -60,7 +71,7 @@ public class UserController {
     public Object toLogin(@RequestBody JSONObject object)throws InterruptedException{
         String code = object.getString("code");
         String password = object.getString("password");
-        //通过路由，去调用service-you服务中的/UserLogin.form接口(负载均衡)
+        //通过路由(Service-my服务的负载均衡)，去调用service-you服务中的/UserLogin.form接口
         String Url = localUrlPrefix + "/local/UserLogin.form";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
@@ -70,7 +81,7 @@ public class UserController {
         params.put("code",code);
         params.put("password",password);
         HttpEntity<String> formEntity = new HttpEntity<>(params.toString(), headers);
-        return restTemplate.postForObject(Url, formEntity, String.class);
+        return commRestTemplate.postForObject(Url, formEntity, String.class);
     }
 
     @RequestMapping(value = "/UserCancellation.form",method = RequestMethod.POST)
@@ -89,4 +100,5 @@ public class UserController {
         error = jsonUtil.failure(500,"Login接口出现问题","请及时查看");
         return error;
     }
+
 }

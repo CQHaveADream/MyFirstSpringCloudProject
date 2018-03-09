@@ -7,10 +7,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 @EnableHystrixDashboard //注解开启仪表盘的支持
-@EnableCircuitBreaker  //开启断路器
+//@EnableCircuitBreaker  //开启断路器
 @EnableDiscoveryClient
 @SpringBootApplication
 public class DemoApplication {
@@ -25,6 +26,11 @@ public class DemoApplication {
 		return new RestTemplate();
 	}
 
+	@Primary
+	@Bean
+	RestTemplate commRestTemplate() {
+		return new RestTemplate();
+	}
 
 /*
 * 启用基于OAuth2 的单点登录,做一些安全配置，
