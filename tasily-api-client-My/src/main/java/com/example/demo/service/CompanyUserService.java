@@ -2,53 +2,60 @@ package com.example.demo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.dao.CompanyUserDao;
+import com.example.demo.dao.RsaDao;
 import com.example.demo.domain.CompanyUser;
+import com.example.demo.domain.RSAKey;
 import com.example.demo.util.JsonUtil;
+import com.example.demo.util.RSAUtil;
 import com.example.demo.util.RedisUtil;
-import com.example.demo.util.RegularKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 public class CompanyUserService {
 
     @Autowired
-    private CompanyUserDao dao;
+    private CompanyUserDao userDao;
 
     @Autowired
     private RedisUtil redisUtil;
 
     @Autowired
-    private RegularKey regularKey;
+    private RSAUtil rsaUtil;
 
     @Autowired
     private JsonUtil jsonUtil;
 
+    @Autowired
+    private RsaDao rsaDao;
+
     //模拟注册
-    public JSONObject UserRegister(JSONObject msg){
+    public JSONObject UserRegister(JSONObject msg)throws Exception{
 
         String name = msg.getString("name");
         String address = msg.getString("address");
         String code = msg.getString("code");
         String password = msg.getString("password").toLowerCase();
+        String userName = userDao.findNameByCode(code);
+        if (userName != null){
+            return jsonUtil.failure(400,"用户名已经存在，请重新注册",null);
+        }
         if (!password.matches("[a-zA-Z0-9]{9}")){
             return jsonUtil.failure(400,"密码长度为9位，由数字1-9和字母a-z(不区分大小写)组成",null);
         }
-        String key = regularKey.setBase64Encryptor(password);
-
+        RSAKey rsaKey = rsaDao.findRsaById(1);
+        //得到用公钥加密后的password
+        byte[] RsaPassword = rsaUtil.encryptByPublicKey(password.getBytes(), rsaKey.getPublicKey());
+        //String key = rsaUtil.setBase64Encryptor(password);
         CompanyUser user = new CompanyUser();
         user.setName(name);
         user.setAddress(address);
         user.setCode(code);
-        user.setPassword(key);
-        dao.save(user);
+        user.setPassword(rsaUtil.encryptBASE64(RsaPassword));
+        userDao.save(user);
         return jsonUtil.success(null);
     }
 
@@ -59,23 +66,21 @@ public class CompanyUserService {
         if (redisUtil.hasKey(code)){
             redisUtil.deleteByKey(code);
         }
-
-        dao.deleteByCode(code);
+        userDao.deleteByCode(code);
         return jsonUtil.success(null);
     }
 
     //根据用户名查找用户姓名
     public String findNameByCode(String code){
-        CompanyUser user = dao.findByCode(code);
+        CompanyUser user = userDao.findByCode(code);
         String name = user.getName();
         return name;
     }
     //查询所有用户
     public Page<CompanyUser> findAllUser(JSONObject code){
-
         int start = code.getIntValue("start");
         int end = code.getIntValue("end");
-        return dao.findAll(new PageRequest(start,end));
+        return userDao.findAll(new PageRequest(start,end));
     }
 
 }

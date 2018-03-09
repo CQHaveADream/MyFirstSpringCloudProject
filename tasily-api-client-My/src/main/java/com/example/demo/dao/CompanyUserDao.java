@@ -22,4 +22,7 @@ public interface CompanyUserDao extends JpaRepository<CompanyUser,Serializable>{
 
     @Override
     Page<CompanyUser> findAll(Pageable pageable);
+
+    @Query("select u.name from CompanyUser u where u.code = ?1 ")
+    String findNameByCode(String code);
 }

@@ -37,7 +37,7 @@ public class UserController {
     private JsonUtil jsonUtil;
 
     @RequestMapping(value = "/Register.form",method = RequestMethod.POST)
-    public JSONObject Register(@RequestBody JSONObject code){
+    public JSONObject Register(@RequestBody JSONObject code)throws Exception{
       return service.UserRegister(code);
     }
 
