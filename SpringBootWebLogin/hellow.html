@@ -24,7 +24,7 @@
                             dataType: "json",
                             url: 'http://192.168.11.110:8762/user/toLogin.form',
                             contentType : 'application/json',
-                            data: JSON.stringify({name:$('#code').val(),password:$('#pas').val(),flag:true}),
+                            data: JSON.stringify({code:$('#userName').val(),password:$('#pas').val()}),
                             success: function(data){
                                 console.log(data);
                                 if(data.code==204){
@@ -57,11 +57,11 @@
     <table align="center">
         <tr>
             <th align="right">用户名</th>
-            <td><input  id="code" name="name"></td>
+            <td><input  id="userName" name="code"></td>
         </tr>
         <tr>
             <th align="right">密码</th>
-            <td><input id="pas" name="pasword" type="password"/></td>
+            <td><input id="pas" name="password" type="password"/></td>
         </tr>
     </table>
 </div>
