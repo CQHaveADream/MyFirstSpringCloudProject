@@ -20,7 +20,7 @@ public class CompanyUserController {
     private String port;
 
     @RequestMapping(value = "/UserLogin.form",method = RequestMethod.POST)
-    public JSONObject  findUserByName(@RequestBody JSONObject object)throws Exception{
+    public JSONObject findUserByName(@RequestBody JSONObject object)throws Exception{
         String code = object.getString("code");
         String password = object.getString("password");
         object = service.Login(code,password);

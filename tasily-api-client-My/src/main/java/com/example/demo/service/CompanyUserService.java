@@ -46,10 +46,10 @@ public class CompanyUserService {
         if (!password.matches("[a-zA-Z0-9]{9}")){
             return jsonUtil.failure(400,"密码长度为9位，由数字1-9和字母a-z(不区分大小写)组成",null);
         }
-        RSAKey rsaKey = rsaDao.findRsaById(1);
+        //从redis中取出公钥
+        String publicKey = (String)redisUtil.getHashValue("RSAKey","publicKey");
         //得到用公钥加密后的password
-        byte[] RsaPassword = rsaUtil.encryptByPublicKey(password.getBytes(), rsaKey.getPublicKey());
-        //String key = rsaUtil.setBase64Encryptor(password);
+        byte[] RsaPassword = rsaUtil.encryptByPublicKey(password.getBytes(), rsaUtil.decryptBASE64(publicKey));
         CompanyUser user = new CompanyUser();
         user.setName(name);
         user.setAddress(address);

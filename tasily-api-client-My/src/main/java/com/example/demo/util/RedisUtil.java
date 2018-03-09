@@ -111,5 +111,4 @@ public class RedisUtil {
     public Object getHashValue(String key,Object hashKey){
        return hashOperations.get(key,hashKey);
     }
-
 }

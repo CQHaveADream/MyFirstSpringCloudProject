@@ -23,21 +23,15 @@ public class CompanyUserService {
 
     @Autowired
     private RedisUtil redisUtil;
-
     @Autowired
     private JsonUtil jsonUtil;
-
     @Autowired
     private RSAUtil rsaUtil;
-
-    @Autowired
-    private RsaDao rsaDao;
 
     //模拟登录
     //@CachePut 应用到写数据的方法上，如新增/修改方法，调用方法时会自动把相应的数据放入缓存
     //@CachePut(value = "addCache", keyGenerator = "wiselyKeyGenerator")
     public JSONObject Login(String code, String password) throws Exception{
-
         //从Redis中读取
         if (redisUtil.hasKey(code)){
             String RdsPas = (String) redisUtil.getHashValue(code,"RdsPass");
@@ -46,16 +40,13 @@ public class CompanyUserService {
             }
             return jsonUtil.success("Redis Have This User");
         }
-        Thread.sleep(1000);
-
         CompanyUser user = dao.findByCode(code);
         if (user==null||code==null||code.equals("")){
             return jsonUtil.failure(404,"User Not Found","请核实用户名信息");
         }
-        //从数据库中获取密码
-        //String RegPas = regularKey.getBase64Decode(user.getPassword());
-        RSAKey rsaKey = rsaDao.findRsaById(1);
-        byte[] RegPas = rsaUtil.decryptByPrivateKey(rsaUtil.decryptBASE64(user.getPassword()),rsaKey.getPrivateKey());
+        //从redis中取出私钥
+        String publicKey = (String)redisUtil.getHashValue("RSAKey","privateKey");
+        byte[] RegPas = rsaUtil.decryptByPrivateKey(rsaUtil.decryptBASE64(user.getPassword()),rsaUtil.decryptBASE64(publicKey));
         if (!password.equalsIgnoreCase(new String(RegPas,"utf-8"))||password.equals("")||password==null){
             return jsonUtil.failure(404,"密码不正确","请重新输入密码");
         }

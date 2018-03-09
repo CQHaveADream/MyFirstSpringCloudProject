@@ -14,7 +14,9 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RSAUtil {
@@ -25,9 +27,11 @@ public class RSAUtil {
     private static int MAX_ENCRYPT_BLOCK=117;
     private static int MAX_DECRYPT_BLOCK=128;
     private RSAKey keyPairs;
+
     @Autowired
     private RsaDao dao;
-
+    @Autowired
+    private RedisUtil redisUtil;
 
 
     /**
@@ -83,7 +87,13 @@ public class RSAUtil {
         byte[] privateKey = object.getBytes(PRIVATE_KEY);
         if (keyPairs==null){//首次
             dao.saveRSAKey(1, privateKey, publicKey, 1);
-        }else dao.updateRsaKeyById(privateKey, publicKey, 1);
+        }else {
+            dao.updateRsaKeyById(privateKey, publicKey, 1);
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("publicKey",this.encryptBASE64(publicKey));
+        map.put("privateKey",this.encryptBASE64(privateKey));
+        redisUtil.PutValueForHash("RSAKey",map);
     }
 
     /**
