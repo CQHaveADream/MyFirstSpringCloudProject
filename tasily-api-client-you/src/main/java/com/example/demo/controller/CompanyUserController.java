@@ -18,7 +18,6 @@ public class CompanyUserController {
 
     @Value("${server.port}")
     private String port;
-
     @RequestMapping(value = "/UserLogin.form",method = RequestMethod.POST)
     public JSONObject findUserByName(@RequestBody JSONObject object)throws Exception{
         String code = object.getString("code");
@@ -28,10 +27,4 @@ public class CompanyUserController {
         object.put("code",204);
         return object;
     }
-
-    @RequestMapping("/hi")
-    public String test1(){
-        return "hi";
-    }
-
 }
