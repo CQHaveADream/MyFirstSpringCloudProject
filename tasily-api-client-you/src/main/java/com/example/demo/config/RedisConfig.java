@@ -59,6 +59,7 @@ public class RedisConfig {
         serializer.setObjectMapper(mapper);
         template.setValueSerializer(serializer);
         template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(serializer);
         template.afterPropertiesSet();
     }
 
