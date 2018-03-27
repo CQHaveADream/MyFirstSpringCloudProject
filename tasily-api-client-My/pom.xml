@@ -34,6 +34,23 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-security</artifactId>
 		</dependency>-->
+
+		<!--添加手机端小米推送-->
+		<dependency>
+			<groupId>com.xiaomi</groupId>
+			<artifactId>json-simple-1.1.1</artifactId>
+			<version>1.1.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/json-simple-1.1.1.jar </systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.xiaomi</groupId>
+			<artifactId>MiPush_SDK_Server_2_2_19</artifactId>
+			<version>2.2.19</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/MiPush_SDK_Server_2_2_19.jar  </systemPath>
+		</dependency>
 		<!--为了找到html-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -106,6 +123,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
 		</dependency>
 	</dependencies>
 
