@@ -9,6 +9,7 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 * 1.service-my
 * 2.service-you
 * 3.config-server
+* 4.service-zuul
 * */
 @EnableEurekaServer
 @SpringBootApplication

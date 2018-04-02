@@ -13,9 +13,7 @@ import javax.crypto.Cipher;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -78,7 +76,7 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    @PostConstruct //init()之前，Constructor只后，调用该方法
+    @PostConstruct //init()之前，Constructor之后，调用该方法
     @Transactional
     public void getSystemRSAKeyPairs() throws Exception {
         keyPairs = dao.findRsaById(1);
