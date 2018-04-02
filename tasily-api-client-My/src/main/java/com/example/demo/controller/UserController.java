@@ -35,7 +35,7 @@ public class UserController {
 
     /*
     * 此处没开启负载均衡，但调用的是Zuul网关路由。
-    * 然而Zuul和Ribbon默认结合实现了负载均衡。
+    * 然而Zuul和Ribbon默认结合实现了负载均衡，
     * 想要通过zuul实现路由，就必须发送如下URL，但该格式的URL不能由
     * restTemplate发送，so...只能通过commRestTemplate方式
     * */
